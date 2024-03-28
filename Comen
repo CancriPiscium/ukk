@@ -1,0 +1,169 @@
+```
+#include <stdio.h> // Library standar input-output
+#include <stdlib.h> // Library untuk fungsi umum, seperti alokasi memori dan konversi
+#include <time.h> // Library untuk pengaturan waktu
+#include <string.h> // Library untuk manipulasi string
+
+// Deklarasi struktur barang
+struct barang
+{
+    char nama_barang[50]; // Nama barang
+    int harga_barang; // Harga barang
+    int jumlah_barang; // Jumlah barang
+    double diskon_barang; // Diskon barang
+};
+
+// Definisi harga barang
+int harga_barang[] = {5000, 2000, 1000, 1000, 500}; // Array harga barang
+
+// Variabel global
+int index = 0; // Indeks untuk array pembelian
+struct barang pembelian[100]; // Array untuk menyimpan pembelian
+int total_jumlah_barang = 0; // Total jumlah barang yang dibeli
+int total_harga_barang = 0; // Total harga barang sebelum diskon
+double jumlah_diskon = 0; // Jumlah diskon yang diberikan
+int total_harga_final = 0; // Total harga setelah diskon
+
+// Deklarasi fungsi
+void pesanBarang(int kode_barang); // Fungsi untuk memesan barang
+void hitungDiskon(struct barang *barang); // Fungsi untuk menghitung diskon barang
+void hitungTotal(); // Fungsi untuk menghitung total pembelian
+
+// Fungsi utama
+int main()
+{
+    // Tetapkan seed untuk fungsi rand() menggunakan waktu saat ini
+    srand(time(NULL));
+
+    // Tampilkan pesan selamat datang dan daftar barang
+    printf("Selamat datang di toko skhenssa\n");
+    printf("Silahkan pilih barang yang anda inginkan\n");
+    printf("=========================================================\n");
+    printf("|No.    | Barang                        | Harga         |\n");
+    printf("---------------------------------------------------------\n");
+    printf("|1      | Buku Tulis                    | Rp. 5000      |\n");
+    printf("|2      | Pensil                        | Rp. 2000      |\n");
+    printf("|3      | Penghapus                     | Rp. 1000      |\n");
+    printf("|4      | Penggaris                     | Rp. 1000      |\n");
+    printf("|5      | Bujur Sangkar                 | Rp. 500       |\n");
+    printf("=========================================================\n\n");
+    printf("99. Struk Pembayaran\n");
+    printf("55. Reset Pilihan\n");
+    printf("00. Keluar\n\n");
+    printf("=========================================================\n\n");
+
+    int kode_barang;
+    while (1) {
+        printf("\n input pilihan yang anda inginkan: ");
+        scanf("%d", &kode_barang);
+
+        // Handle pilihan user
+        if (kode_barang == 99) {
+            hitungTotal();
+            break;
+        } else if (kode_barang == 55) {
+            system("cls");
+            main();
+            break;
+        } else if (kode_barang == 0) {
+            exit(EXIT_SUCCESS);
+        } else if (kode_barang >= 1 && kode_barang <= 5) {
+            pesanBarang(kode_barang);
+        } else {
+            printf("Terjadi kesalahan input, menu no.%d tidak ada dalam daftar barang\n", kode_barang);
+            printf("--input kembali pls--");
+        }
+    }
+
+    return 0;
+}
+
+// Fungsi untuk menukar dua elemen
+void swap(struct barang *a, struct barang *b) {
+    struct barang temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+// Fungsi untuk mengurutkan produk berdasarkan jumlah terbanyak menggunakan Bubble Sort
+void sortBarangByJumlahTerbanyak(struct barang arr[], int n) {
+    int i, j;
+    for (i = 0; i < n-1; i++) {
+        for (j = 0; j < n-i-1; j++) {
+            if (arr[j].jumlah_barang < arr[j+1].jumlah_barang) {
+                swap(&arr[j], &arr[j+1]);
+            }
+        }
+    }
+}
+
+// Fungsi untuk memesan barang
+void pesanBarang(int kode_barang) {
+    printf("\nPemesanan ");
+    switch (kode_barang) {
+        case 1:
+            printf("Buku Tulis");
+            break;
+        case 2:
+            printf("Pensil");
+            break;
+        case 3:
+            printf("Penghapus");
+            break;
+        case 4:
+            printf("Penggaris");
+            break;
+        case 5:
+            printf("Bujur Sangkar");
+            break;
+    }
+
+    // Input jumlah barang yang akan dibeli
+    printf("\nJumlah pesan : ");
+    scanf("%d", &pembelian[index].jumlah_barang);
+
+    // Menyimpan nama barang berdasarkan kode barang
+    strcpy(pembelian[index].nama_barang, (kode_barang == 1) ? "Buku Tulis" :
+                                         (kode_barang == 2) ? "Pensil" :
+                                         (kode_barang == 3) ? "Penghapus" :
+                                         (kode_barang == 4) ? "Penggaris" :
+                                                              "Bujur Sangkar");
+    // Mendapatkan harga barang dari array harga_barang
+    pembelian[index].harga_barang = harga_barang[kode_barang - 1];
+
+    // Menambahkan jumlah barang yang dibeli dan total harga barang
+    total_jumlah_barang += pembelian[index].jumlah_barang;
+    total_harga_barang += pembelian[index].jumlah_barang * pembelian[index].harga_barang;
+
+    // Menghitung diskon untuk barang yang dibeli
+    hitungDiskon(&pembelian[index]);
+    index++;
+}
+
+// Fungsi untuk menghitung diskon barang
+void hitungDiskon(struct barang *barang) {
+    if (barang->jumlah_barang > 5) {
+        barang->diskon_barang = barang->harga_barang * barang->jumlah_barang * 0.15;
+    } else if (barang->jumlah_barang > 3) {
+        barang->diskon_barang = barang->harga_barang * barang->jumlah_barang * 0.10;
+    } else {
+        barang->diskon_barang = 0;
+    }
+
+    // Menambahkan jumlah diskon yang diberikan
+    jumlah_diskon += barang->diskon_barang;
+}
+
+// Fungsi untuk menghitung total pembelian
+void hitungTotal() {
+    // Mengurutkan barang berdasarkan jumlah terbanyak
+    sortBarangByJumlahTerbanyak(pembelian, index);
+
+    // Menampilkan rekap pembelian
+    printf("Rekap Pembelian:\n");
+    printf("====================================================================\n");
+    printf("|No.    | Jumlah  | Barang                  | Harga        | Diskon|\n");
+    printf("--------------------------------------------------------------------\n");
+
+    for (int i = 0; i < index; i++) {
+        printf("| %d\t\t|%-7d\t\t
