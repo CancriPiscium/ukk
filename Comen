@@ -166,4 +166,98 @@ void hitungTotal() {
     printf("--------------------------------------------------------------------\n");
 
     for (int i = 0; i < index; i++) {
-        printf("| %d\t\t|%-7d\t\t
+            printf("| %d\t\t|%-7d\t\t|%-30s\t\t|Rp. %-8d\t\t|Rp. %.2lf\t\t|\n", i + 1, pembelian[i].jumlah_barang, pembelian[i].nama_barang, pembelian[i].harga_barang * pembelian[i].jumlah_barang, pembelian[i].diskon_barang);
+    }
+    printf("====================================================================\n\n");
+
+    // Menampilkan total jumlah barang, total harga barang, dan total diskon
+    printf("Total jumlah barang : %d\n", total_jumlah_barang);
+    printf("Total harga barang  : %d\n", total_harga_barang);
+    printf("Total jumlah diskon : %.2lf\n", jumlah_diskon);
+
+    // Menghitung total harga setelah diskon
+    total_harga_final = total_harga_barang - jumlah_diskon;
+
+    // Menampilkan total harga final
+    printf("Total harga final   : %d\n", total_harga_final);
+    printf("====================================================================\n\n");
+
+    // Input jumlah uang yang dibayarkan oleh pelanggan
+    int bayar;
+    printf("Masukkan jumlah uang yang dibayarkan: ");
+    scanf("%d", &bayar);
+
+    // Menghitung kembalian
+    int kembalian = bayar - total_harga_final;
+
+    // Menampilkan kembalian
+    printf("Kembalian: %d\n", kembalian);
+
+    // Menampilkan struk pembayaran
+    printf("Struk Pembayaran:\n");
+
+    // Menetapkan ID Struk menggunakan fungsi rand()
+    int id_struk = rand() % 100000; // Membatasi hasil menjadi 5 digit (0-99999)
+
+    // Mendapatkan waktu saat ini
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+
+    // Menampilkan ID Struk dan waktu pembelian
+    printf("ID Struk: %05d\n", id_struk);
+    printf("Waktu/Hari/jam: %d-%02d-%02d %02d:%02d:%02d\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+
+    // Menampilkan detail pembelian dalam struk
+    printf("====================================================================\n");
+    printf("|No.    | Jumlah  | Barang                        | Harga        | Diskon\n");
+    printf("--------------------------------------------------------------------\n");
+    for (int i = 0; i < index; i++) {
+        printf("|%d      | %-7d | %-30s | Rp. %-8d | Rp. %.2lf\n", i+1, pembelian[i].jumlah_barang, pembelian[i].nama_barang, pembelian[i].harga_barang * pembelian[i].jumlah_barang, pembelian[i].diskon_barang);
+    }
+    printf("====================================================================\n\n");
+
+    // Menampilkan total jumlah barang, total harga barang, total diskon, total harga final, jumlah uang yang dibayar, dan kembalian
+    printf("Total jumlah barang : %d\n", total_jumlah_barang);
+    printf("Total harga barang  : %d\n", total_harga_barang);
+    printf("Total jumlah diskon : %.2lf\n", jumlah_diskon);
+    printf("Total harga final   : %d\n", total_harga_final);
+    printf("Jumlah harga yang dibayar : %d\n", bayar);
+    printf("Kembalian : %d\n", kembalian);
+    printf("====================================================================\n\n");
+
+    // Membuat nama file struk dengan format "Struk_IDStruk.txt"
+    char nama_file[20];
+    sprintf(nama_file, "Struk_%05d.txt", id_struk);
+
+    // Menyimpan struk pembayaran ke dalam file teks
+    FILE *file = fopen(nama_file, "w");
+
+    // Memeriksa apakah file berhasil dibuka
+    if (file != NULL) {
+        // Menulis detail pembelian ke dalam file
+        fprintf(file, "Struk Pembayaran:\n");
+        fprintf(file, "ID Struk: %05d\n", id_struk);
+        fprintf(file, "Waktu/Hari/jam: %d-%02d-%02d %02d:%02d:%02d\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+        fprintf(file, "====================================================================\n");
+        fprintf(file, "|No.    | Jumlah  | Barang                        | Harga        | Diskon\n");
+        fprintf(file, "--------------------------------------------------------------------\n");
+        for (int i = 0; i < index; i++) {
+            fprintf(file, "|%d      | %-7d | %-30s | Rp. %-8d | Rp. %.2lf\n", i+1, pembelian[i].jumlah_barang, pembelian[i].nama_barang, pembelian[i].harga_barang * pembelian[i].jumlah_barang, pembelian[i].diskon_barang);
+        }
+        fprintf(file, "====================================================================\n\n");
+        fprintf(file, "Total jumlah barang : %d\n", total_jumlah_barang);
+        fprintf(file, "Total harga barang  : %d\n", total_harga_barang);
+        fprintf(file, "Total jumlah diskon : %.2lf\n", jumlah_diskon);
+        fprintf(file, "Total harga final  : %d\n", total_harga_final);
+        fprintf(file, "Jumlah harga yang dibayar : %d\n", bayar);
+        fprintf(file, "Kembalian : %d\n", kembalian);
+        fprintf(file, "====================================================================\n\n");
+
+        // Menutup file setelah selesai penulisan
+        fclose(file);
+        printf("Struk pembayaran telah disimpan dalam file %s.\n", nama_file);
+    } else {
+        // Menampilkan pesan kesalahan jika gagal menyimpan file
+        printf("Gagal menyimpan struk pembayaran.\n");
+    }
+}
